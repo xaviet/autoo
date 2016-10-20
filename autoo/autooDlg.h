@@ -4,6 +4,7 @@
 
 #pragma once
 #define TIMER_1s 1
+#define TIMER_60s 60
 
 // CautooDlg dialog
 class CautooDlg : public CDialogEx
@@ -31,6 +32,7 @@ private:
 	int m_setact;
 	int m_starttime;
 	int domouseclick(int v_x,int v_y, int v_sleepms);
+  int domouseclicktest(int v_x, int v_y, int v_sleepms);
 
 protected:
 	HICON m_hIcon;
@@ -49,4 +51,7 @@ public:
 	afx_msg void OnClickedAct();
 	afx_msg void OnClickedLog();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+  int m_workMode;
+  int maxWin();
+  
 };
