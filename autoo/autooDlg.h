@@ -32,6 +32,7 @@ private:
 	int m_setact;
 	int m_starttime;
 	int domouseclick(int v_x,int v_y, int v_sleepms);
+	int monkdomouseclick(int v_x, int v_y, int v_sleepms);
   int domouseclicktest(int v_x, int v_y, int v_sleepms);
 
 protected:
@@ -54,4 +55,6 @@ public:
   int m_workMode;
   int maxWin();
   
+  afx_msg void OnBnClickedIn();
+  afx_msg void OnBnClickedOut();
 };
