@@ -23,6 +23,7 @@ CautooDlg::CautooDlg(CWnd* pParent /*=NULL*/)
   , m_setact(0)
   , m_starttime(210000)
   , m_workMode(0)
+  , mdeviation(_T(""))
 {
   m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -33,6 +34,7 @@ void CautooDlg::DoDataExchange(CDataExchange* pDX)
   DDX_Text(pDX, IDC_position, m_position);
   DDX_Text(pDX, IDC_operate, m_operate);
   DDX_Radio(pDX, IDC_IN, m_workMode);
+  DDX_Text(pDX, IDC_EDIT2, mdeviation);
 }
 
 BEGIN_MESSAGE_MAP(CautooDlg, CDialogEx)
@@ -63,6 +65,7 @@ BOOL CautooDlg::OnInitDialog()
   SetTimer(TIMER_60s, 60000, NULL);
   UpdateData(TRUE);
   this->m_operate.Format(_T("%d"), this->m_starttime);
+  this->mdeviation.Format(_T("25"));
   UpdateData(FALSE);
   return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -190,7 +193,7 @@ int CautooDlg::doact()
     m_setact = 0;
     //MessageBox(t_cs);
     //Sleep(2000);
-    int t_a = 0;//25;
+    int t_a = _ttoi(this->mdeviation);
     int t_delay = 4000;
     /* 1440X900 */
     domouseclick(1400, 20, t_delay);
@@ -207,14 +210,14 @@ int CautooDlg::doact()
     if (m_workMode == 0)
     {
       domouseclick(140, 170 - t_a, t_delay);
-      domouseclick(1230, 342 - t_a, t_delay);
+      domouseclick(1230, 335 - t_a, t_delay);
       //monkdomouseclick(1230, 342 - t_a, t_delay);
       //domouseclicktest(1225, 335, t_delay);
     }
     else if (m_workMode == 1)
     {
       domouseclick(200, 170 - t_a, t_delay);
-      domouseclick(1240, 350 - t_a, t_delay);
+      domouseclick(1240, 335 - t_a, t_delay);
       //monkdomouseclick(1240, 350 - t_a, t_delay);
       //domouseclicktest(1245, 340, t_delay);
     }
