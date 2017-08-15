@@ -24,6 +24,9 @@ CautooDlg::CautooDlg(CWnd* pParent /*=NULL*/)
   , m_starttime(210000)
   , m_workMode(0)
   , mdeviation(_T(""))
+  , mDelay(_T(""))
+  , mNorun(0)
+  , mMonk(0)
 {
   m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -35,6 +38,9 @@ void CautooDlg::DoDataExchange(CDataExchange* pDX)
   DDX_Text(pDX, IDC_operate, m_operate);
   DDX_Radio(pDX, IDC_IN, m_workMode);
   DDX_Text(pDX, IDC_EDIT2, mdeviation);
+  DDX_Text(pDX, IDC_EDIT3, mDelay);
+  DDX_Check(pDX, IDC_CHECK1, mNorun);
+  DDX_Check(pDX, IDC_CHECK2, mMonk);
 }
 
 BEGIN_MESSAGE_MAP(CautooDlg, CDialogEx)
@@ -64,8 +70,10 @@ BOOL CautooDlg::OnInitDialog()
   SetTimer(TIMER_1s, 1000, NULL);
   SetTimer(TIMER_60s, 60000, NULL);
   UpdateData(TRUE);
-  this->m_operate.Format(_T("%d"), this->m_starttime);
-  this->mdeviation.Format(_T("25"));
+  // this->m_operate.Format(_T("%d"), this->m_starttime);
+  this->m_operate = dogetdate().Left(14).Right(6);
+  this->mdeviation.Format(_T("0"));
+  this->mDelay.Format(_T("8"));
   UpdateData(FALSE);
   return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -175,10 +183,10 @@ int CautooDlg::maxWin()
 {
   keybd_event(VK_LWIN, 0, 0, 0);
   keybd_event(VK_UP, 0, 0, 0);
-  Sleep(500);
+  Sleep(100);
   keybd_event(VK_UP, 0, KEYEVENTF_KEYUP, 0);
   keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0);
-  Sleep(500);
+  Sleep(1000);
   return(0);
 }
 
@@ -194,54 +202,92 @@ int CautooDlg::doact()
     //MessageBox(t_cs);
     //Sleep(2000);
     int t_a = _ttoi(this->mdeviation);
-    int t_delay = 4000;
+    int t_delay = _ttoi(this->mDelay) * 1000;
     /* 1440X900 */
-    domouseclick(1400, 20, t_delay);
-    domouseclick(1115, 80, t_delay);
-    maxWin();
-    //domouseclick(330, 250, t_delay);
-    domouseclick(1100, 440, t_delay);
-    //domouseclick(1300, 20, t_delay);
-    maxWin();
-    domouseclick(35, 140 - t_a, t_delay);
-    domouseclick(70, 225 - t_a, t_delay);
-    domouseclick(275, 430 - t_a, t_delay);
-    domouseclick(480, 450 - t_a, t_delay);
-    if (m_workMode == 0)
+    if (!this->mNorun)
     {
-      domouseclick(140, 170 - t_a, t_delay);
-      domouseclick(1230, 335 - t_a, t_delay);
-      //monkdomouseclick(1230, 342 - t_a, t_delay);
-      //domouseclicktest(1225, 335, t_delay);
+      domouseclick(1400, 20, t_delay);
+      domouseclick(1115, 80, t_delay);
+      maxWin();
+      //domouseclick(330, 250, t_delay);
+      domouseclick(1035, 460, t_delay);
+      //domouseclick(1300, 20, t_delay);
+      maxWin();
+      domouseclick(35, 140 - t_a, t_delay);
+      domouseclick(70, 225 - t_a, t_delay);
+      domouseclick(265, 420 - t_a, t_delay);
+      domouseclick(480, 450 - t_a, t_delay);
+      if (m_workMode == 0)
+      {
+        domouseclick(140, 170 - t_a, t_delay);
+        if (this->mMonk)
+        {
+          monkdomouseclick(1225, 335 - t_a, t_delay);
+        }
+        else
+        {
+          domouseclick(1225, 335 - t_a, t_delay);
+        }
+      }
+      else if (m_workMode == 1)
+      {
+        domouseclick(200, 170 - t_a, t_delay);
+        if (this->mMonk)
+        {
+          monkdomouseclick(1240, 340 - t_a, t_delay);
+        }
+        else
+        {
+          domouseclick(1240, 340 - t_a, t_delay);
+        }
+      }
+      keybd_event(VK_RETURN, 0, 0, 0);
+      Sleep(500);
+      keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0);
+      domouseclick(1350, 20 - t_a, t_delay);
+
+      /* 1600X900
+      domouseclick(1559, 10, 8000);
+      domouseclick(1470, 220 , 2000);
+      domouseclick(400, 240, 8000);
+      domouseclick(1190, 440, 8000);
+      domouseclick(1455, 10, 8000);
+      domouseclick(25, 140, 2000);
+      domouseclick(88, 233, 2000);
+      domouseclick(302, 428, 2000);
+      domouseclick(495, 462, 2000);
+      //domouseclick(490, 435, 2000);
+      domouseclick(203, 171, 2000);
+      //SetCursorPos(1411, 338);
+      domouseclick(1411, 338, 2000);
+      */
     }
-    else if (m_workMode == 1)
+    else
     {
-      domouseclick(200, 170 - t_a, t_delay);
-      domouseclick(1240, 335 - t_a, t_delay);
-      //monkdomouseclick(1240, 350 - t_a, t_delay);
-      //domouseclicktest(1245, 340, t_delay);
+      CStdioFile csf;
+      //csf.Open(_T("motion.cfg"), CFile::modeWrite || CFile::typeText);
+      //csf.WriteString(_T("123411234112341222222"));
+      //csf.Close();
+      csf.Open(_T("motion.cfg"), CFile::modeRead);
+      CString motionline = _T("");
+      while (csf.ReadString(motionline))
+      {        
+        if (motionline.Find(_T("maxwin")) != -1)
+        {
+          maxWin();
+        }
+        else if(motionline.Find(_T("mouseclick")) != -1)
+        {
+          int tx = 0, ty = 0, tpos = 0;
+          motionline = motionline.Right(motionline.GetLength() - 11);
+          tpos = motionline.Find(_T(";"));
+          tx = _ttoi(motionline.Left(tpos));
+          ty = _ttoi(motionline.Right(motionline.GetLength() - tpos - 1));
+          monkdomouseclick(tx, ty - t_a, t_delay);
+        }
+      }
+      csf.Close();
     }
-    keybd_event(VK_RETURN, 0, 0, 0);
-    Sleep(500);
-    keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, 0);
-    domouseclick(1350, 20 - t_a, t_delay);
-
-    /* 1600X900
-    domouseclick(1559, 10, 8000);
-    domouseclick(1470, 220 , 2000);
-    domouseclick(400, 240, 8000);
-    domouseclick(1190, 440, 8000);
-    domouseclick(1455, 10, 8000);
-    domouseclick(25, 140, 2000);
-    domouseclick(88, 233, 2000);
-    domouseclick(302, 428, 2000);
-    domouseclick(495, 462, 2000);
-    //domouseclick(490, 435, 2000);
-    domouseclick(203, 171, 2000);
-    //SetCursorPos(1411, 338);
-    domouseclick(1411, 338, 2000);
-    */
-
   }
   return(TRUE);
 }

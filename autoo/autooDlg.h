@@ -58,4 +58,7 @@ public:
   afx_msg void OnBnClickedIn();
   afx_msg void OnBnClickedOut();
   CString mdeviation;
+  CString mDelay;
+  int mNorun;
+  int mMonk;
 };
